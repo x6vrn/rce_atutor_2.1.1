@@ -12,7 +12,7 @@ I developed a Python script to exploit multiple vulnerabilities and achieve RCE.
 
 using the code
 ```bash
-python3 atutor_RCE.py <target>
+git clone https://github.com/x6vrn/rce_atutor_2.1.1.git
 ```
 ```bash
 python3 atutor_RCE.py <target>
